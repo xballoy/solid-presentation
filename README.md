@@ -1,11 +1,14 @@
-# Welcome to [Slidev](https://github.com/slidevjs/slidev)!
+# SOLID: The First 5 Principles of Object Oriented Design Explained
+
+See the latest version of the presentation: [https://xballoy.github.io/solid-presentation](https://xballoy.github.io/solid-presentation).
+
+## Contributing
 
 To start the slide show:
 
-- `npm install`
+- `npm ci`
 - `npm run dev`
-- visit http://localhost:3030
+- visit [http://localhost:3030](http://localhost:3030)
+- edit the [slides.md](./slides.md) to see the changes
 
-Edit the [slides.md](./slides.md) to see the changes.
-
-Learn more about Slidev on [documentations](https://sli.dev/).
+See documentation on [Slidev](https://sli.dev/).
