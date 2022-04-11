@@ -1,6 +1,16 @@
 {
   "name": "@xballoy/solid-presentation",
   "private": true,
+  "author": "Xavier Balloy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xballoy/solid-presentation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xballoy/solid-presentation/issues"
+  },
+  "homepage": "https://github.com/xballoy/solid-presentation#readme",
   "scripts": {
     "build": "slidev build --base /solid-presentation/",
     "dev": "slidev --open",
