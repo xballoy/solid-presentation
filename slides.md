@@ -45,12 +45,12 @@ backgroundSize: contain
 ## Example: SRP broken
 
 ```mermaid
-   classDiagram
-      class Invader {
-          +health() int
-          +move()
-          +render()
-      }
+classDiagram
+  class Invader {
+      +health() int
+      +move()
+      +render()
+  }
 ```
 
 Several reasons to change:
@@ -64,18 +64,18 @@ Several reasons to change:
 ## Example: SRP fixed
 
 ```mermaid
-   classDiagram
-      Invader <|-- InvaderMover
-      Invader <|-- InvaderRenderer
-      class Invader {
-          +health() int
-      }
-      class InvaderMover {
-          +move(Invader)
-      }
-      class InvaderRenderer {
-          +render(Invader)
-      }
+classDiagram
+  Invader <|-- InvaderMover
+  Invader <|-- InvaderRenderer
+  class Invader {
+      +health() int
+  }
+  class InvaderMover {
+      +move(Invader)
+  }
+  class InvaderRenderer {
+      +render(Invader)
+  }
 ```
 
 Single reason to change: logic that calculate the health 
@@ -88,7 +88,7 @@ backgroundSize: contain
 
 # Open/Closed Principle (OCP)
 
-> Software entities ... should be open for extension, but closed for modification.
+> Software entities [...] should be open for extension, but closed for modification.
 
 <mdi-alert /> OCP is **not** about
 
@@ -97,6 +97,7 @@ backgroundSize: contain
 OCP is about:
 - programming to the superclass/interface
 - ensuring that we always refer to abstraction and not concrete implementation
+
 
 ---
 
@@ -124,41 +125,42 @@ public final class Invaders {
 - Depending on concrete implementation of `SimpleInvaderMover` and `OpenGlInvaderRenderer`
 - If we cannot change them we need to change `Invaders` directly
 
+
 ---
 
 # Open/Closed Principle
 ## Example: OCP fixed
 
 ```mermaid
-   classDiagram
-      InvaderMover <|-- SimpleInvaderMover
-      InvaderMover <|-- FancyInvaderMover
-      class InvaderMover
-      <<interface>> InvaderMover
-      InvaderMover : move(Invader)
-      
-      class SimpleInvaderMover {
-        +move(Invader)
-      }
-      
-      class FancyInvaderMover {
-        +move(Invader)
-      }
-      
-      InvaderRenderer <|-- OpenGlInvaderRenderer
-      InvaderRenderer <|-- DirectXInvaderRenderer
-      class InvaderRenderer
-      <<interface>> InvaderRenderer
-      InvaderRenderer : render(Invader)
-      
-      class OpenGlInvaderRenderer {
-        +render(Invader)
-      }
-      
-      class DirectXInvaderRenderer {
-        +render(Invader)
-      }
+classDiagram
+  InvaderMover <|-- SimpleInvaderMover
+  InvaderMover <|-- FancyInvaderMover
+  class InvaderMover
+  <<interface>> InvaderMover
+  InvaderMover : move(Invader)
+  
+  class SimpleInvaderMover {
+    +move(Invader)
+  }
+  
+  class FancyInvaderMover {
+    +move(Invader)
+  }
+  
+  class InvaderRenderer
+  <<interface>> InvaderRenderer
+  InvaderRenderer : render(Invader)
+  
+  class OpenGlInvaderRenderer {
+    +render(Invader)
+  }
+  
+  class DirectXInvaderRenderer {
+    +render(Invader)
+  }
 ```
+
+
 ---
 
 # Open/Closed Principle
@@ -201,6 +203,220 @@ backgroundSize: contain
   - Same methods signatures
   - Same methods conditions
   - Same class properties rules
+
+---
+
+# Liskov Substitution Principle
+## Method Signature Rules: Contravariance of Arguments
+
+- A subclass implementing a method of its superclass must have the same number of parameters.
+- The type of each parameter in the subclass must be the same or a supertype of the type used in the respective parameter in the superclass method.
+
+```mermaid
+  classDiagram
+    direction LR
+    Projectile <|-- Missile
+    Missile <|-- GuidedMissile
+    Invader <|-- DiveBomber
+    class Invader {
+        +checkCollision(Missile)
+    }
+    class DiveBomber {
+        +checkCollision(Projectile)
+    }
+```
+
+
+---
+
+# Liskov Substitution Principle
+## Method Signature Rules: Covariance of Result
+
+- Either both the subclass and superclass methods return a result, or they don’t.
+- When they do return a result, the subclass method must return the same type or a subtype of the result returned by the superclass method.
+
+```java{2,7}
+public class Invader {
+    public Missile checkCollision(){...}
+}
+
+public final class DiveBomber extends Invader {
+    @Override
+    public GuidedMissile checkCollision(){...}
+}
+```
+
+
+---
+
+# Liskov Substitution Principle
+## Method Signature Rules: Exception Rule Broken
+
+- Any exceptions thrown by a subclass method should be the same, or a subtype of the exception thrown by the respective superclass method.
+
+```java
+public class GraphicsException extends RuntimeException {
+}
+
+public class OpenGlException extends RuntimeException {
+}
+
+public class Invaders {
+    public void draw() {
+        throw new GraphicsException();
+    }
+}
+
+public class FancyInvaders extends Invaders {
+    @Override
+    public void draw() {
+        throw new OpenGlException();
+    }
+}
+```
+
+---
+
+# Liskov Substitution Principle
+## Method Signature Rules: Exception Rule Fixed
+
+```java{4}
+public class GraphicsException extends RuntimeException {
+}
+
+public class OpenGlException extends GraphicsException {
+}
+
+public class Invaders {
+    public void draw() {
+        throw new GraphicsException();
+    }
+}
+
+public class FancyInvaders extends Invaders {
+    @Override
+    public void draw() {
+        throw new OpenGlException();
+    }
+}
+```
+
+---
+
+# Liskov Substitution Principle
+## Method Condition Rules: pre-condition rule
+
+- The **pre-conditions** required by subclass methods **must not be stronger** than the pre-conditions required by the respective superclass method.
+
+```java{3,14}
+public class Invader {
+  boolean checkCollision(Missile missile) {
+    if (missile == null) {
+      return false;
+    } else {
+      return missile.intersects(this);
+    }
+  }
+}
+
+public class DiveBomber extends Invader {
+  @Override
+  boolean checkCollision(Missile missile) {
+    if (missile.active()) {
+      return missile.intersects(this);
+    }
+    return false;
+  }
+}
+```
+
+---
+
+# Liskov Substitution Principle
+## Method Condition Rules: post-condition rule
+
+- The **post-conditions** guaranteed by subclass methods **must not be weaker** than the post-conditions guaranteed by the respective superclass method.
+
+```java{5,7,16,18}
+public class Invader {
+    static final Missile dummyMissile = new Missile();
+    Missile checkCollision(Missile missile) {
+        if (missile == null) {
+            return dummyMissile;
+        } else {
+            return missile.intersects(this) ? missile : dummyMissile;
+        }
+    }
+}
+
+public class DiveBomber extends Invader {
+    @Override
+    Missile checkCollision(Missile missile) {
+        if (missile.active()) {
+            return missile.intersects(this) ? missile : null;
+        }
+        return null;
+    }
+}
+```
+
+---
+
+# Liskov Substitution Principle
+## Class Property rules: Invariant Rule
+
+- Any invariants guaranteed by a superclass must also be guaranteed by its subclass
+
+```java{6-8,18}
+public class Invaders {
+  public Invaders(int maxInvaders) {
+    this.maxInvaders = maxInvaders;
+  }
+  public void add(Invader invader) {
+    if (invaders.size() <= this.maxInvaders) {
+      invaders.add(invader);
+    }
+  }
+}
+
+public final class SuperInvaders extends Invaders {
+  public SuperInvaders(int maxInvaders) {
+    super(maxInvaders);
+  }
+  @Override
+  public void add(Invader invader) {
+    invaders.add(invader);
+  }
+}
+```
+
+---
+
+# Liskov Substitution Principle
+## Class Property rules: Constraint Rule
+
+- Constraints adhered to by a superclass must be adhered to by its subclasses.
+
+```java
+public class Invader {
+    protected int strength;
+    public Invader(int strength) {
+        this.strength = strength;
+    }
+    public int getStrength() {
+        return strength;
+    }
+}
+
+public class DiveBomber extends Invader {
+    public DiveBomber(int strength) {
+        super(strength);
+    }
+    public void setStrength(int strength) {
+        this.strength = strength;
+    }
+}
+```
 
 ---
 layout: image-right
