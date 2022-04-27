@@ -147,6 +147,8 @@ classDiagram
     +move(Invader)
   }
   
+  InvaderRenderer <|-- OpenGlInvaderRenderer
+  InvaderRenderer <|-- DirectXInvaderRenderer
   class InvaderRenderer
   <<interface>> InvaderRenderer
   InvaderRenderer : render(Invader)
@@ -210,11 +212,10 @@ backgroundSize: contain
 ## Method Signature Rules: Contravariance of Arguments
 
 - A subclass implementing a method of its superclass must have the same number of parameters.
-- The type of each parameter in the subclass must be the same or a supertype of the type used in the respective parameter in the superclass method.
+- The type of each parameter in the subclass must be **the same or a supertype** of the type used in the respective parameter in the superclass method.
 
 ```mermaid
   classDiagram
-    direction LR
     Projectile <|-- Missile
     Missile <|-- GuidedMissile
     Invader <|-- DiveBomber
@@ -233,7 +234,7 @@ backgroundSize: contain
 ## Method Signature Rules: Covariance of Result
 
 - Either both the subclass and superclass methods return a result, or they don’t.
-- When they do return a result, the subclass method must return the same type or a subtype of the result returned by the superclass method.
+- When they do return a result, the subclass method must return **the same type or a subtype** of the result returned by the superclass method.
 
 ```java{2,7}
 public class Invader {
@@ -252,7 +253,7 @@ public final class DiveBomber extends Invader {
 # Liskov Substitution Principle
 ## Method Signature Rules: Exception Rule Broken
 
-- Any exceptions thrown by a subclass method should be the same, or a subtype of the exception thrown by the respective superclass method.
+- Any exceptions thrown by a subclass method should be **the same, or a subtype** of the exception thrown by the respective superclass method.
 
 ```java
 public class GraphicsException extends RuntimeException {
@@ -274,6 +275,7 @@ public class FancyInvaders extends Invaders {
     }
 }
 ```
+
 
 ---
 
