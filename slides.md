@@ -9,14 +9,15 @@ image: /intro_invader.jpg
 ---
 
 <div class="absolute top-10">
-  <span class="font-700">
+  <p class="font-700">
     Xavier Balloy | <Today />
-  </span>
+  </p>
 </div>
 
 <div class="absolute bottom-10">
   <h1>SOLID</h1>
   <p>The First 5 Principles of Object Oriented Design Explained</p>
+  <p class="text-sm"><Version /></p>
 </div>
 
 <!--
