@@ -105,7 +105,7 @@ OCP is about:
 ## Example: OCP broken
 
 ```java{4-5}
-public final class Invaders {
+public class Invaders {
 
   private final Collection<Invader> invaders = ...;
   private final SimpleInvaderMover simpleInvaderMover = new SimpleInvaderMover();
@@ -123,7 +123,7 @@ public final class Invaders {
 ```
 
 - Depending on concrete implementation of `SimpleInvaderMover` and `OpenGlInvaderRenderer`
-- If we cannot change them we need to change `Invaders` directly
+- If we need to change them we need to change `Invaders` directly
 
 
 ---
@@ -169,7 +169,7 @@ classDiagram
 ## Example: OCP fixed
 
 ```java{4-6}
-public final class Invaders {
+public class Invaders {
 
     private Collection<Invader> invaders = ...;
     // See DIP for how these are instantiated
@@ -236,15 +236,17 @@ backgroundSize: contain
 - Either both the subclass and superclass methods return a result, or they don’t.
 - When they do return a result, the subclass method must return **the same type or a subtype** of the result returned by the superclass method.
 
-```java{2,7}
-public class Invader {
-    public Missile checkCollision(){...}
-}
-
-public final class DiveBomber extends Invader {
-    @Override
-    public GuidedMissile checkCollision(){...}
-}
+```mermaid
+  classDiagram
+    Projectile <|-- Missile
+    Missile <|-- GuidedMissile
+    Invader <|-- DiveBomber
+    class Invader {
+        +Missile checkCollision()
+    }
+    class DiveBomber {
+        +GuidedMissile checkCollision()
+    }
 ```
 
 
@@ -341,8 +343,8 @@ public class DiveBomber extends Invader {
 
 ```java{5,7,16,18}
 public class Invader {
-    static final Missile dummyMissile = new Missile();
-    Missile checkCollision(Missile missile) {
+    private static final Missile dummyMissile = new Missile();
+    public Missile checkCollision(Missile missile) {
         if (missile == null) {
             return dummyMissile;
         } else {
@@ -353,7 +355,7 @@ public class Invader {
 
 public class DiveBomber extends Invader {
     @Override
-    Missile checkCollision(Missile missile) {
+    public Missile checkCollision(Missile missile) {
         if (missile.active()) {
             return missile.intersects(this) ? missile : null;
         }
@@ -381,7 +383,7 @@ public class Invaders {
   }
 }
 
-public final class SuperInvaders extends Invaders {
+public class SuperInvaders extends Invaders {
   public SuperInvaders(int maxInvaders) {
     super(maxInvaders);
   }
@@ -437,13 +439,13 @@ backgroundSize: contain
 # Interface Segregation Principle
 ## Example: ISP broken
 
-```java{11,12,16,17}
+```java{1-4,11,12,16,17}
 interface Invader{
     void bomb();
     void swoop();
 }
 
-public final class Bomber implements Invader{
+public class Bomber implements Invader{
     @Override
     public void bomb() {
         dropBombs();
@@ -452,7 +454,7 @@ public final class Bomber implements Invader{
     public void swoop() {}
 }
 
-public final class Swooper implements Invader{
+public class Swooper implements Invader{
     @Override
     public void bomb() {}
     @Override
@@ -476,7 +478,7 @@ interface BombingInvader {
      void swoop();
  }
 
- public final class Bomber implements BombingInvader {
+ public class Bomber implements BombingInvader {
 
      @Override
      public void bomb() {
@@ -484,7 +486,7 @@ interface BombingInvader {
      }
  }
 
- public final class Swooper implements SwoopingInvader {
+ public class Swooper implements SwoopingInvader {
 
      @Override
      public void swoop() {
@@ -499,7 +501,7 @@ interface BombingInvader {
 ## Example: ISP fixed
 
 ```java
-public final class SwoopingBomber implements SwoopingInvader, BombingInvader {
+public class SwoopingBomber implements SwoopingInvader, BombingInvader {
 
   @Override
   public void bomb() {
@@ -534,7 +536,7 @@ backgroundSize: contain
 ## Example
 
 ```java
-public final class Invaders {
+public class Invaders {
 
     private final InvaderMover invaderMover;
     private final InvaderRenderer invaderRenderer;
