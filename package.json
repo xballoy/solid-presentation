@@ -24,6 +24,6 @@
   },
   "devDependencies": {
     "@iconify-json/mdi": "1.1.17",
-    "playwright-chromium": "1.22.1"
+    "playwright-chromium": "1.22.2"
   }
 }
